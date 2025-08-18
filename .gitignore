@@ -1,0 +1,28 @@
+# Hệ điều hành
+.DS_Store
+Thumbs.db
+
+# IDE / Editor
+.vscode/
+.idea/
+*.log
+
+# PHP Composer
+/vendor/
+composer.lock
+
+# NodeJS
+/node_modules/
+package-lock.json
+
+# Upload files (ảnh sản phẩm, tạm thời)
+uploads/
+*.tmp
+
+# Env / config nhạy cảm
+.env
+config.php
+
+# Cache
+*.cache
+*.bak
