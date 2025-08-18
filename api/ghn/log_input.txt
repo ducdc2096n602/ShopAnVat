@@ -1,0 +1,6 @@
+Array
+(
+    [district_id] => 1572
+    [ward_code] => 550111
+    [weight] => 800
+)

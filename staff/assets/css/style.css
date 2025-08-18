@@ -1,0 +1,65 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f8f9fa;
+  transition: background 0.3s;
+}
+
+.nav-link {
+  transition: all 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding-left: 10px;
+}
+
+.nav-link.active {
+  background-color: #ffffff33;
+  font-weight: bold;
+  border-left: 4px solid white;
+}
+
+.card {
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
+  border-radius: 12px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.btn {
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+  transform: scale(1.03);
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sidebar a.nav-link {
+  transition: background 0.2s;
+}
+
+.sidebar a.nav-link:hover {
+  background-color: rgba(255,255,255,0.2);
+  border-radius: 4px;
+}
+
+.sidebar .collapse a {
+  font-size: 14px;
+  padding-left: 15px;
+}
