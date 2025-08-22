@@ -1,9 +1,9 @@
 <?php
 require_once('../../../helpers/startSession.php');
-startRoleSession('admin'); // Đảm bảo session_start() được gọi ở đây
+startRoleSession('admin'); 
 require_once('../../../database/dbhelper.php');
 
-// Danh sách danh mục tin tức (chỉ lấy những danh mục chưa bị xóa)
+// Danh sách danh mục tin tức chỉ lấy những danh mục chưa bị xóa
 $categories = executeResult("SELECT * FROM CategoryNews WHERE is_deleted = 0 ORDER BY name ASC");
 
 // Xử lý phân trang và lọc
@@ -16,17 +16,14 @@ $where = 'WHERE 1=1 '; // Điều kiện mặc định
 if (!empty($categoryFilter)) {
     $where .= "AND n.CategoryNews_ID = " . intval($categoryFilter) . " ";
 }
-// Bỏ lọc is_deleted để hiển thị cả tin đã vô hiệu hóa
-// $where .= "AND n.is_deleted = 0"; // bỏ lọc này, để hiển thị cả tin đã vô hiệu hóa
 
 
-// Lấy tổng số bản ghi (cho phân trang)
+
+// Lấy tổng số bản ghi cho phân trang
 $countWhere = 'WHERE 1=1 '; // Điều kiện riêng cho đếm tổng số bản ghi
 if (!empty($categoryFilter)) {
     $countWhere .= "AND n.CategoryNews_ID = " . intval($categoryFilter) . " ";
 }
-// Nếu bạn muốn phân trang chỉ tính những tin ĐANG HOẠT ĐỘNG, thì bỏ comment dòng này:
-// $countWhere .= "AND n.is_deleted = 0"; 
 
 $countSQL = "SELECT COUNT(*) AS total FROM News n $countWhere";
 $countResult = executeSingleResult($countSQL);
@@ -189,10 +186,9 @@ $newsList = executeResult($sql);
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-// Hàm xử lý SweetAlert2 từ session, phải đặt TRƯỚC các hàm khác để nó chạy ngay khi trang tải
+
 $(document).ready(function() {
     <?php
-    // Hiển thị thông báo SweetAlert2 nếu có trong session
     if (isset($_SESSION['swal_alert'])) {
         $swal_type = $_SESSION['swal_alert']['type'];
         $swal_message = $_SESSION['swal_alert']['message'];
@@ -202,12 +198,12 @@ $(document).ready(function() {
             text: '{$swal_message}',
             confirmButtonText: 'Đóng'
         });";
-        unset($_SESSION['swal_alert']); // Xóa biến session sau khi hiển thị
+        unset($_SESSION['swal_alert']);
     }
     ?>
 });
 
-// Hàm toggleNews (vẫn giữ nguyên)
+
 function toggleNews(news_ID, status) {
     Swal.fire({
         title: 'Xác nhận thay đổi trạng thái?',
@@ -246,7 +242,7 @@ function toggleNews(news_ID, status) {
     });
 }
 
-// Hàm deleteNews (đã thêm SweetAlert2)
+
 function deleteNews(news_ID) {
     Swal.fire({
         title: 'Bạn có chắc chắn muốn xóa?',
@@ -266,7 +262,6 @@ function deleteNews(news_ID) {
                 try {
                     const res = typeof response === 'string' ? JSON.parse(response) : response;
                     if (res.status === 'success') {
-                        // Lưu thông báo vào session và tải lại trang
                         sessionStorage.setItem('swal_alert', JSON.stringify({
                             type: 'success',
                             message: res.message || 'Tin tức đã được xóa.'

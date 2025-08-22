@@ -120,7 +120,7 @@ $history = executeResult($sql);
     </div>
 </div>
 
-<!-- FontAwesome icon (cho nút home) -->
+
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>

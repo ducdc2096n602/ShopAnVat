@@ -21,7 +21,7 @@
         <h4>Giờ mở cửa</h4>
         <p>Thứ 2 - CN: 8:00 - 22:00</p>
         <p>Giao hàng toàn quốc</p>
-        <p>Miễn phí nội thành TP.Cần Thơ</p>
+        <p>Miễn phí vận chuyển nội thành</p>
       </div>
 
       <div class="footer-column">
@@ -36,7 +36,7 @@
     </div>
 
     <div class="footer-bottom">
-      <p>&copy; 2025 Ăn Vặt Shop. Được phát triển bởi <strong>Team Ăn Là Ghiền</strong>.</p>
+      <p>&copy; 2025 Thế giới ăn vặt. Được phát triển bởi <strong>Team Ăn Là Ghiền</strong>.</p>
     </div>
   </div>
 </footer>

@@ -1,6 +1,6 @@
 <?php
 require_once('../helpers/startSession.php');
-startRoleSession('customer'); // đảm bảo session đúng vai trò
+startRoleSession('customer'); 
 
 require_once('../database/config.php');
 require_once('../database/dbhelper.php');

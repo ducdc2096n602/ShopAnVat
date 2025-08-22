@@ -39,25 +39,21 @@ if (!empty($_POST['code'])) {
                 'title' => 'Lỗi tải ảnh',
                 'message' => "File ảnh quá lớn! Kích thước tối đa là 2MB."
             ];
-            // Không chuyển hướng ngay lập tức, để SweetAlert2 hiển thị trên trang add.php
-            // header('Location: add.php' . (!empty($voucher_ID) ? '?voucher_ID=' . $voucher_ID : ''));
-            // exit;
+            
         } elseif (!in_array($imageFileType, $allowtypes)) {
             $_SESSION['swal_alert'] = [
                 'type' => 'error',
                 'title' => 'Lỗi định dạng ảnh',
                 'message' => "Chỉ cho phép ảnh JPG, PNG, GIF, WebP,..."
             ];
-            // header('Location: add.php' . (!empty($voucher_ID) ? '?voucher_ID=' . $voucher_ID : ''));
-            // exit;
+            
         } elseif (!move_uploaded_file($_FILES["image_url"]["tmp_name"], $target_file)) {
             $_SESSION['swal_alert'] = [
                 'type' => 'error',
                 'title' => 'Lỗi tải lên',
                 'message' => "Lỗi khi upload ảnh!"
             ];
-            // header('Location: add.php' . (!empty($voucher_ID) ? '?voucher_ID=' . $voucher_ID : ''));
-            // exit;
+            
         }
     }
 
@@ -101,15 +97,14 @@ if (!empty($_POST['code'])) {
             $should_redirect_after_success = true; // Đặt cờ để chuyển hướng sau thông báo
         }
         execute($sql);
-        // Bỏ header('Location: listvoucher.php'); ở đây
     }
 }
 
-// Lấy thông báo từ session để hiển thị SweetAlert2
+
 $swal_alert_data = null;
 if (isset($_SESSION['swal_alert'])) {
     $swal_alert_data = $_SESSION['swal_alert'];
-    unset($_SESSION['swal_alert']); // Xóa session sau khi đã lấy
+    unset($_SESSION['swal_alert']); 
 }
 
 if (isset($_GET['voucher_ID'])) {
@@ -121,7 +116,7 @@ if (isset($_GET['voucher_ID'])) {
     }
 }
 
-// Khởi tạo biến nếu không có voucher (chế độ thêm mới)
+// Khởi tạo biến nếu không có voucher (thêm mới)
 if (!isset($voucher)) {
     $voucher_ID = '';
     $code = '';
@@ -247,7 +242,7 @@ $(document).ready(function () {
         ]
     });
 
-    // Hiển thị SweetAlert2 nếu có thông báo từ PHP Session
+    
     <?php if ($swal_alert_data): ?>
         Swal.fire({
             icon: '<?= $swal_alert_data['type'] ?>',
@@ -255,7 +250,6 @@ $(document).ready(function () {
             text: '<?= $swal_alert_data['message'] ?>',
             confirmButtonText: 'Đóng'
         }).then((result) => {
-            // Chỉ chuyển hướng nếu là thông báo thành công
             <?php if ($should_redirect_after_success): ?>
                 window.location.href = 'listvoucher.php';
             <?php endif; ?>

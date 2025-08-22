@@ -1,5 +1,5 @@
 /* ======================== RESET & BASE ======================== */
-/* Đã gom các reset cơ bản và áp dụng box-sizing cho mọi phần tử */
+/* các reset cơ bản và áp dụng box-sizing cho mọi phần tử */
 * {
     margin: 0;
     padding: 0;
@@ -39,7 +39,6 @@ img {
     padding: 0 20px;
 }
 
-/* Flex helper - Giữ nguyên nhưng nên sử dụng cụ thể hơn thay vì flex chung */
 .flex {
     display: flex;
     align-items: center;
@@ -56,10 +55,9 @@ img {
     z-index: 1000;
 }
 
-.site-header .container { /* Áp dụng flex cho container bên trong header */
+.site-header .container { 
     display: flex;
     align-items: center;
-    /* justify-content: space-between; -- Bỏ thuộc tính này ở đây để kiểm soát riêng */
     padding: 10px 20px; /* Padding cho nội dung header */
 }
 
@@ -565,7 +563,7 @@ input[type="number"] {
 .swiper-slide img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* hoặc contain nếu muốn toàn bộ ảnh */
+  object-fit: cover; 
 }
 
 
@@ -662,7 +660,7 @@ button.listening i {
     100% { transform: scale(1); }
 }
 
-/* --- BẮT ĐẦU CSS PHÂN TRANG ĐẸP --- */
+/* --- CSS PHÂN TRANG --- */
 .pagination {
     display: flex;
     justify-content: center;
@@ -724,7 +722,7 @@ button.listening i {
 
 /* Sidebar common styles */
 .sidebar {
-    width: 250px; /* Adjust as needed */
+    width: 250px; 
     padding: 20px;
     background-color: #f8f8f8;
     border-right: 1px solid #eee;
@@ -768,37 +766,36 @@ button.listening i {
 .price-filter-list li a:hover,
 .sort-by-list li a:hover {
     background-color: #e9e9e9;
-    color: #007bff; /* Or your brand color */
+    color: #007bff; 
 }
 
 .category-list li a.active,
 .price-filter-list li a.active,
 .sort-by-list li a.active {
-    background-color: #007bff; /* Or your brand color */
+    background-color: #007bff; 
     color: #fff;
     font-weight: bold;
 }
 
-/* Ensure main content area adjusts */
+
 .main-layout-2col .row-2col {
-    display: flex; /* Makes sidebar and product area side by side */
-    gap: 20px; /* Space between sidebar and product area */
+    display: flex; 
+    gap: 20px; 
 }
 
 .product-area {
-    flex-grow: 1; /* Allows product area to take remaining space */
-    padding: 0 20px; /* Add some padding if needed */
+    flex-grow: 1; 
+    padding: 0 20px; 
 }
 
-/* Adjust search form if necessary */
+
 .search-form button[type="submit"],
 .search-form button[type="button"] {
-    /* Existing styles for buttons */
-    margin-left: 5px; /* Add some space */
+    margin-left: 5px; 
 }
 
 .search-form button.listening {
-    background-color: #28a745; /* Green when listening */
+    background-color: #28a745; 
     color: white;
 }
 

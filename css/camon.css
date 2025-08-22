@@ -42,7 +42,6 @@
 
 .thank-you.failed p {
     color: #555;
-    border: 2px solid #d32f2f; /* đỏ */
 }
 
 .thank-you.failed .btn {

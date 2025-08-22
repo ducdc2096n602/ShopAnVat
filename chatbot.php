@@ -1,4 +1,4 @@
-<!-- chatbot.php -->
+
 <style>
 #chatbot-toggle {
     position: fixed;

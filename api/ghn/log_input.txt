@@ -1,6 +1,6 @@
 Array
 (
-    [district_id] => 1572
-    [ward_code] => 550111
-    [weight] => 800
+    [district_id] => 1574
+    [ward_code] => 550304
+    [weight] => 300
 )

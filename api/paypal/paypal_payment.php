@@ -63,9 +63,11 @@ $usd_total = round($total_vnd / $exchange_rate, 2);
         <input type="hidden" name="first_name" value="<?= htmlspecialchars($fullname) ?>">
         <input type="hidden" name="email" value="<?= htmlspecialchars($email) ?>">
         <input type="hidden" name="address1" value="<?= htmlspecialchars($delivery_address) ?>">
-        <input type="hidden" name="city" value="TP.HCM">
-        <input type="hidden" name="state" value="HCM">
-        <input type="hidden" name="zip" value="70000">
+        <input type="hidden" name="address_override" value="1">
+        <input type="hidden" name="no_shipping" value="1">
+        <input type="hidden" name="city" value=".">
+        <input type="hidden" name="state" value=".">
+        <input type="hidden" name="zip" value=".">
         <input type="hidden" name="country" value="VN">
 
         <!-- URL điều hướng -->

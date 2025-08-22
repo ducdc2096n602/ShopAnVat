@@ -12,6 +12,8 @@ startRoleSession('admin');
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
     .btn-sm { margin: 2px 0; width: 90px; white-space: nowrap; }
     .action-buttons { display: flex; justify-content: center; gap: 0.25rem; }
@@ -209,33 +211,73 @@ startRoleSession('admin');
 
 <script>
 function toggleStatus(account_ID, newStatus) {
-  $.post('ajax.php', {
-    account_ID: account_ID,
-    action: 'toggle_status',
-    status: newStatus
-  }, function(res) {
-    if (res.status === 'success') {
-      const row = $('#row-' + account_ID);
-      const cells = row.find('td:not(.status-cell):not(:last-child)');
-      const statusCell = row.find('.status-cell');
-      const dropdownBtn = row.find('.toggle-btn');
+  let actionText = (newStatus === 2) ? "vô hiệu hóa" : "kích hoạt lại";
 
-      if (newStatus === 1) {
-        cells.removeClass('inactive');
-        statusCell.html('<span class="badge badge-success"><i class="fas fa-check"></i> Đang hoạt động</span>');
-        dropdownBtn.html('<i class="fas fa-ban text-danger"></i> Vô hiệu hóa');
-        dropdownBtn.attr('onclick', `toggleStatus(${account_ID}, 2)`);
-      } else {
-        cells.addClass('inactive');
-        statusCell.html('<span class="badge badge-secondary"><i class="fas fa-ban"></i> Vô hiệu hóa</span>');
-        dropdownBtn.html('<i class="fas fa-check-circle text-success"></i> Kích hoạt lại');
-        dropdownBtn.attr('onclick', `toggleStatus(${account_ID}, 1)`);
-      }
-    } else {
-      alert('Thao tác thất bại');
+  Swal.fire({
+    title: "Xác nhận",
+    text: "Bạn có chắc muốn " + actionText + " tài khoản khách hàng này?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Đồng ý",
+    cancelButtonText: "Hủy"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.post('ajax.php', {
+        account_ID: account_ID,
+        action: 'toggle_status',
+        status: newStatus
+      }, function(res) {
+        if (res.status === 'success') {
+          const row = $('#row-' + account_ID);
+          const cells = row.find('td:not(.status-cell):not(:last-child)');
+          const statusCell = row.find('.status-cell');
+          const dropdownBtn = row.find('.toggle-btn');
+
+          if (newStatus === 1) {
+            cells.removeClass('inactive');
+            statusCell.html('<span class="badge badge-success"><i class="fas fa-check"></i> Đang hoạt động</span>');
+            dropdownBtn.html('<i class="fas fa-ban text-danger"></i> Vô hiệu hóa');
+            dropdownBtn.attr('onclick', `toggleStatus(${account_ID}, 2)`);
+            Swal.fire({
+              icon: 'success',
+              title: 'Thành công!',
+              text: 'Tài khoản khách hàng đã được kích hoạt lại.',
+              showConfirmButton: false,
+              timer: 1500
+            });
+          } else {
+            cells.addClass('inactive');
+            statusCell.html('<span class="badge badge-secondary"><i class="fas fa-ban"></i> Vô hiệu hóa</span>');
+            dropdownBtn.html('<i class="fas fa-check-circle text-success"></i> Kích hoạt lại');
+            dropdownBtn.attr('onclick', `toggleStatus(${account_ID}, 1)`);
+            Swal.fire({
+              icon: 'success',
+              title: 'Thành công!',
+              text: 'Tài khoản khách hàng đã bị vô hiệu hóa.',
+              showConfirmButton: false,
+              timer: 1500
+            });
+          }
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi!',
+            text: res.message || 'Thao tác thất bại. Vui lòng thử lại.',
+            confirmButtonText: 'Đóng'
+          });
+        }
+      }, 'json').fail(function(jqXHR, textStatus, errorThrown) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Lỗi AJAX!',
+          text: 'Không thể kết nối đến máy chủ hoặc có lỗi xảy ra: ' + textStatus,
+          confirmButtonText: 'Đóng'
+        });
+      });
     }
-  }, 'json');
+  });
 }
+
 
 </script>
 </body>

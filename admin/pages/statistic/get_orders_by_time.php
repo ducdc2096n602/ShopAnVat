@@ -8,7 +8,7 @@ $from = $_GET['from'] ?? date('Y-m-d', strtotime('-1 month'));
 $to = $_GET['to'] ?? date('Y-m-d');
 $type = $_GET['type'] ?? 'month';
 
-// Nếu chưa có khoảng thời gian → mặc định 30 ngày gần nhất
+// Nếu chưa có khoảng thời gian,mặc định 30 ngày gần nhất
 if (!$from || !$to) {
     $to = date('Y-m-d');
     $from = date('Y-m-d', strtotime('-30 days'));

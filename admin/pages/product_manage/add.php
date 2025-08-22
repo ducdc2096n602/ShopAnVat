@@ -2,22 +2,20 @@
 require_once('../../../helpers/startSession.php');
 startRoleSession('admin');
 require_once('../../../database/dbhelper.php');
-// Đặt ngay sau startRoleSession('admin');
-$swal_alert_data = null;
-if (isset($_SESSION['swal_alert'])) {
-    $swal_alert_data = $_SESSION['swal_alert'];
-    unset($_SESSION['swal_alert']);
-}
 
+// Lấy dữ liệu alert từ session
+$swal_alert_data = $_SESSION['swal_alert'] ?? null;
+unset($_SESSION['swal_alert']);
+
+// Khai báo biến
 $id = $product_name = $base_price = $weight = $description = $category_ID = "";
 $thumbnailList = [];
 
-
-// Nếu có GET product_ID => load dữ liệu để sửa
+// LOAD SẢN PHẨM NẾU CHỈNH SỬA 
 if (!empty($_GET['product_ID'])) {
     $id = intval($_GET['product_ID']);
-    $sql = "SELECT * FROM Product WHERE product_ID = $id LIMIT 1";
-    $product = executeSingleResult($sql);
+    $product = executeSingleResult("SELECT * FROM Product WHERE product_ID = $id LIMIT 1");
+
     if ($product) {
         $product_name = $product['product_name'];
         $base_price   = $product['base_price'];
@@ -25,145 +23,126 @@ if (!empty($_GET['product_ID'])) {
         $description  = $product['description'];
         $category_ID  = $product['category_ID'];
 
-        // Lấy danh sách ảnh sản phẩm
         $thumbnailList = executeResult("SELECT * FROM ProductImage WHERE product_ID = $id");
     } else {
-        $_SESSION['swal_alert'] = [
-            'type' => 'error',
-            'message' => 'Sản phẩm không tồn tại.'
-        ];
+        $_SESSION['swal_alert'] = ['type' => 'error','message' => 'Sản phẩm không tồn tại.'];
         header('Location: listproduct.php');
         exit();
     }
 }
 
-// Phần xử lý POST thêm/sửa sản phẩm (đoạn bạn đã có sẵn) ...
-
+//  XỬ LÝ POST 
 if (!empty($_POST['product_name'])) {
-    // Lấy dữ liệu từ form
-    $product_name = str_replace('"', '\\"', $_POST['product_name']);
-    $id = $_POST['product_ID'] ?? '';
-    $base_price = $_POST['base_price'] ?? '';
-    $weight = $_POST['weight'] ?? '';
+    $id          = $_POST['product_ID'] ?? '';
+    $product_name= trim($_POST['product_name']);
+    $base_price  = $_POST['base_price'] ?? '';
+    $weight      = $_POST['weight'] ?? '';
     $description = $_POST['description'] ?? '';
     $category_ID = $_POST['category_ID'] ?? '';
-    $created_at = $updated_at = date('Y-m-d H:i:s');
+    $created_at  = $updated_at = date('Y-m-d H:i:s');
 
-    // Kiểm tra tính hợp lệ của các trường thông tin
-   // if (empty($product_name) || empty($base_price) || empty($weight) || empty($category_ID)) {
-     //   $_SESSION['swal_alert'] = [
-     //       'type' => 'error',
-     //       'message' => 'Thông tin sản phẩm không hợp lệ. Vui lòng kiểm tra lại.'
-     //   ];
-     //   header('Location: ' . $_SERVER['HTTP_REFERER']);
-     //   exit();
-   // }
-
+    // Validate
     if (!is_numeric($base_price) || $base_price <= 0) {
-        $_SESSION['swal_alert'] = [
-            'type' => 'error',
-            'message' => 'Giá sản phẩm không hợp lệ. Vui lòng nhập giá sản phẩm lớn hơn 0.'
-        ];
-        header('Location: ' . $_SERVER['HTTP_REFERER']);
-        exit();
+        $_SESSION['swal_alert'] = ['type'=>'error','message'=>'Giá sản phẩm phải > 0'];
+        header('Location: '.$_SERVER['HTTP_REFERER']); exit();
     }
-
     if (!is_numeric($weight) || $weight <= 0) {
-        $_SESSION['swal_alert'] = [
-            'type' => 'error',
-            'message' => 'Khối lượng sản phẩm không hợp lệ. Vui lòng nhập khối lượng lớn hơn 0'
-        ];
-        header('Location: ' . $_SERVER['HTTP_REFERER']);
-        exit();
+        $_SESSION['swal_alert'] = ['type'=>'error','message'=>'Khối lượng phải > 0'];
+        header('Location: '.$_SERVER['HTTP_REFERER']); exit();
     }
 
-    // Nếu là thêm mới sản phẩm
+    // Insert / Update
     if (empty($id)) {
         $sql = 'INSERT INTO Product (product_name, base_price, weight, description, category_ID, created_at, updated_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?)';
-        $params = [$product_name, $base_price, $weight, $description, $category_ID, $created_at, $updated_at];
-        execute($sql, $params);
+        execute($sql, [$product_name,$base_price,$weight,$description,$category_ID,$created_at,$updated_at]);
 
-        $result = executeSingleResult('SELECT MAX(product_ID) as max_id FROM Product');
-        $product_ID = $result['max_id'];
-
-        // Thiết lập thông báo thành công
-        $_SESSION['swal_alert'] = [
-            'type' => 'success',
-            'message' => 'Thêm sản phẩm thành công!'
-        ];
+        $product_ID = executeSingleResult('SELECT MAX(product_ID) as max_id FROM Product')['max_id'];
+        $_SESSION['swal_alert'] = ['type'=>'success','message'=>'Thêm sản phẩm thành công!'];
     } else {
-        $sql = 'UPDATE Product SET product_name = ?, base_price = ?, weight = ?, description = ?, category_ID = ?, updated_at = ?
-                WHERE product_ID = ?';
-        $params = [$product_name, $base_price, $weight, $description, $category_ID, $updated_at, $id];
-        execute($sql, $params);
-
+        $sql = 'UPDATE Product SET product_name=?, base_price=?, weight=?, description=?, category_ID=?, updated_at=? 
+                WHERE product_ID=?';
+        execute($sql, [$product_name,$base_price,$weight,$description,$category_ID,$updated_at,$id]);
         $product_ID = $id;
-
-        // Thiết lập thông báo thành công
-        $_SESSION['swal_alert'] = [
-            'type' => 'success',
-            'message' => 'Cập nhật sản phẩm thành công!'
-        ];
+        $_SESSION['swal_alert'] = ['type'=>'success','message'=>'Cập nhật sản phẩm thành công!'];
     }
 
-    // Xử lý hình ảnh sản phẩm
+    // XỬ LÝ ẢNH 
     if (!empty($_FILES['images']['name'][0])) {
-        $target_dir = "../../../images/uploads/product/";
-        $allowtypes = ['jpg', 'jpeg', 'png', 'gif'];
-        $maxfilesize = 2 * 1024 * 1024; //2mb
+        $allowtypes = ['jpg','jpeg','png','gif'];
+        $maxfilesize = 2*1024*1024;
 
-        foreach ($_FILES['images']['name'] as $key => $name) {
+        // Hàm loại bỏ dấu tiếng Việt
+function removeVietnamese($str) {
+    $str = mb_strtolower($str, 'UTF-8'); 
+    $str = str_replace(
+        ['à','á','ạ','ả','ã','â','ầ','ấ','ậ','ẩ','ẫ','ă','ằ','ắ','ặ','ẳ','ẵ',
+         'è','é','ẹ','ẻ','ẽ','ê','ề','ế','ệ','ể','ễ',
+         'ì','í','ị','ỉ','ĩ',
+         'ò','ó','ọ','ỏ','õ','ô','ồ','ố','ộ','ổ','ỗ','ơ','ờ','ớ','ợ','ở','ỡ',
+         'ù','ú','ụ','ủ','ũ','ư','ừ','ứ','ự','ử','ữ',
+         'ỳ','ý','ỵ','ỷ','ỹ',
+         'đ'],
+        ['a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a',
+         'e','e','e','e','e','e','e','e','e','e','e',
+         'i','i','i','i','i',
+         'o','o','o','o','o','o','o','o','o','o','o','o','o','o','o','o','o',
+         'u','u','u','u','u','u','u','u','u','u','u',
+         'y','y','y','y','y',
+         'd'],
+        $str
+    );
+    return $str;
+}
+       // Lấy category_name từ DB
+$sql = "SELECT c.category_name 
+        FROM Product p 
+        JOIN Category c ON p.category_ID = c.category_ID 
+        WHERE p.product_ID = $product_ID";
+$category = executeSingleResult($sql);
+
+$sub_folder = '';
+if ($category) {
+    // Chuyển category_name sang không dấu để khớp thư mục thực tế
+    $sub_folder = removeVietnamese($category['category_name']);
+    $sub_folder = str_replace(' ', '', $sub_folder) . '/';
+}
+
+
+
+// Thư mục thật trên server
+$target_dir = "../../../images/uploads/product/" . $sub_folder;
+
+
+        if (!is_dir($target_dir)) {
+            $_SESSION['swal_alert'] = ['type'=>'error','message'=>"Thư mục [$sub_folder] chưa tồn tại. Vui lòng tạo trước!"];
+            header('Location: '.$_SERVER['HTTP_REFERER']); exit();
+        }
+
+        foreach ($_FILES['images']['name'] as $key=>$name) {
             $tmp_name = $_FILES['images']['tmp_name'][$key];
-            $size = $_FILES['images']['size'][$key];
-            $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+            $size     = $_FILES['images']['size'][$key];
+            $ext      = strtolower(pathinfo($name, PATHINFO_EXTENSION));
 
-            // Kiểm tra định dạng và kích thước hình ảnh
-            if ($size > $maxfilesize) {
-                $_SESSION['swal_alert'] = [
-                    'type' => 'error',
-                    'message' => 'Kích thước ảnh không hợp lệ. Vui lòng chọn ảnh có kích thước dưới 2mb'
-                ];
-                header('Location: ' . $_SERVER['HTTP_REFERER']);
-                exit();
-            }
+            if ($size>$maxfilesize || !in_array($ext,$allowtypes)) continue;
 
-            if (!in_array($ext, $allowtypes)) {
-                $_SESSION['swal_alert'] = [
-                    'type' => 'error',
-                    'message' => 'Định dạng hình ảnh không hợp lệ. Vui lòng tải lên hình ảnh có định dạng jpg, jpeg, png, gif.'
-                ];
-                header('Location: ' . $_SERVER['HTTP_REFERER']);
-                exit();
-            }
+            $filename = preg_replace('/[^A-Za-z0-9_.-]/','_',basename($name));
+            $target_file = $target_dir.$filename;
+            $db_path = $sub_folder.$filename;
 
-            $originalName = basename($name);
-            $filename = preg_replace('/[^A-Za-z0-9_.-]/', '_', $originalName);
-            $target_file = $target_dir . $filename;
-
-            // Kiểm tra tên file trùng
-            $i = 1;
-            while (file_exists($target_file)) {
-                $filename = pathinfo($originalName, PATHINFO_FILENAME) . "_{$i}." . $ext;
-                $target_file = $target_dir . $filename;
-                $i++;
-            }
-
-            if (move_uploaded_file($tmp_name, $target_file)) {
-                $is_primary = 0;
-                $hasPrimary = executeSingleResult("SELECT * FROM ProductImage WHERE product_ID = $product_ID AND is_primary = 1");
-                if (!$hasPrimary) $is_primary = 1;
-
-                execute("INSERT INTO ProductImage(product_ID, image_url, is_primary) VALUES ($product_ID, '$filename', $is_primary)");
+            if (move_uploaded_file($tmp_name,$target_file)) {
+                $hasPrimary = executeSingleResult("SELECT * FROM ProductImage WHERE product_ID=$product_ID AND is_primary=1");
+                $is_primary = $hasPrimary ? 0 : 1;
+                execute("INSERT INTO ProductImage(product_ID,image_url,is_primary) VALUES(?,?,?)", [$product_ID,$db_path,$is_primary]);
             }
         }
     }
 
-    // Chuyển hướng sau khi set session
     header('Location: ../product_manage/listproduct.php');
-    die();
+    exit();
 }
 ?>
+
 
 
 <!DOCTYPE html>

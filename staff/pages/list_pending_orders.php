@@ -136,7 +136,7 @@ $total_pages = ceil($total / $limit);
     </form>
 
     <div class="alert alert-warning text-center <?= $showDateWarning ? '' : 'd-none' ?>" id="date-warning">
-        ⚠️ Ngày bắt đầu không thể lớn hơn ngày kết thúc. Vui lòng chọn lại.
+         Ngày bắt đầu không thể lớn hơn ngày kết thúc. Vui lòng chọn lại.
     </div>
 
     <div class="card shadow-sm mb-0">

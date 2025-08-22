@@ -34,9 +34,6 @@ if (!empty($_POST['question']) && !empty($_POST['answer'])) {
         execute($sql, [$question, $answer, $type, $account_ID, $id]);
         $success_message = 'Cập nhật tri thức thành công!';
     }
-    // Không chuyển hướng ngay lập tức ở đây, mà sẽ chuyển hướng sau khi hiển thị SweetAlert2
-    // header('Location: list_knowledge.php');
-    // exit;
 }
 ?>
 
@@ -111,7 +108,7 @@ $(document).ready(function () {
         ]
     });
 
-    // Hiển thị SweetAlert2 nếu có thông báo thành công
+  
     <?php if (!empty($success_message)): ?>
         Swal.fire({
             icon: 'success',
@@ -120,7 +117,7 @@ $(document).ready(function () {
             showConfirmButton: false,
             timer: 1500
         }).then(() => {
-            window.location.href = 'list_knowledge.php'; // Chuyển hướng sau khi alert đóng
+            window.location.href = 'list_knowledge.php'; 
         });
     <?php endif; ?>
 });

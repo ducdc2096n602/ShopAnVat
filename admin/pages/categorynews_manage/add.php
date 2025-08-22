@@ -19,18 +19,14 @@ if (!empty($_POST['name'])) {
 
         if ($existing) {
             $_SESSION['swal_alert'] = ['type' => 'error', 'message' => 'Danh mục tin tức này đã tồn tại!'];
-            // IMPORTANT: Remove header('Location: add.php'); exit(); here
-            // The SweetAlert will now show on the current page after reload if you want to stay on add.php
-            // For now, no redirect needed here as the page will simply reload and display the alert.
-            // If you want to clear the form fields on error, you'd need more complex JS.
-            // For simplicity, we'll let the alert show on the current page.
+           
         } else {
             // Thêm mới
             $sql = 'INSERT INTO categorynews(name, created_at, updated_at) 
                     VALUES ("' . $name . '", "' . $created_at . '", "' . $updated_at . '")';
             execute($sql);
             $_SESSION['swal_alert'] = ['type' => 'success', 'message' => 'Đã thêm danh mục tin tức thành công!'];
-            header('Location: list_category_news.php'); // Redirect on success
+            header('Location: list_category_news.php'); 
             exit();
         }
     } else {
@@ -39,7 +35,7 @@ if (!empty($_POST['name'])) {
                 WHERE CategoryNews_ID=' . $CategoryNews_ID;
         execute($sql);
         $_SESSION['swal_alert'] = ['type' => 'success', 'message' => 'Đã sửa danh mục tin tức thành công!'];
-        header('Location: list_category_news.php'); // Redirect on success (or update)
+        header('Location: list_category_news.php'); 
         exit();
     }
 }
@@ -87,7 +83,7 @@ if (isset($_GET['CategoryNews_ID'])) {
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     <?php
-    // Display SweetAlert2 messages if set in session
+    
     if (isset($_SESSION['swal_alert'])) {
         $swal_type = $_SESSION['swal_alert']['type'];
         $swal_message = $_SESSION['swal_alert']['message'];
@@ -97,7 +93,7 @@ if (isset($_GET['CategoryNews_ID'])) {
             text: '{$swal_message}',
             confirmButtonText: 'Đóng'
         });";
-        unset($_SESSION['swal_alert']); // Clear the session variable
+        unset($_SESSION['swal_alert']); 
     }
     ?>
 </script>

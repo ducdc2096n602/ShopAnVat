@@ -15,10 +15,6 @@ $payment_status_paypal = $_GET['st'] ?? null; // Trạng thái thanh toán từ 
 $payment_amount = $_GET['amt'] ?? null;
 $currency = $_GET['cc'] ?? null;
 
-// Thêm log để kiểm tra các tham số nhận được
-error_log("--- PayPal Success Callback received: " . date('Y-m-d H:i:s') . " ---");
-error_log("Order ID: " . $order_ID . ", TXN ID: " . ($txn_id ?? 'N/A') . ", Status from PayPal: " . ($payment_status_paypal ?? 'N/A'));
-error_log("-----------------------------------------------------------------");
 
 // Biến để lưu trạng thái cuối cùng sẽ cập nhật vào DB
 $status_to_update = 'Chờ xác nhận'; // Mặc định là 'Chờ xác nhận' nếu thanh toán thành công

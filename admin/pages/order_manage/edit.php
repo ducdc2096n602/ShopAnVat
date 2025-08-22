@@ -91,7 +91,7 @@ $updateQuery .= " WHERE order_ID = $order_ID";
     execute("INSERT INTO OrderStatusHistory (order_ID, status, staff_ID, changed_at) 
              VALUES ($order_ID, '$newStatus', NULL, '$now')");
 
-    // Nếu là trạng thái hủy → gửi email
+    // Nếu là trạng thái hủy, gửi email
     if ($newStatus === 'Đã hủy') {
         $mail = new PHPMailer(true);
         try {
@@ -271,7 +271,7 @@ $updateQuery .= " WHERE order_ID = $order_ID";
     </form>
 </div>
 
-<!-- SweetAlert2 -->
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
@@ -280,7 +280,7 @@ $updateQuery .= " WHERE order_ID = $order_ID";
     const reasonInput = document.getElementById('cancel_reason');
     const submitBtn = document.getElementById('submitBtn');
 
-    // Lấy trạng thái hiện tại và danh sách thứ tự từ PHP (đã khai báo ở PHP)
+    // Lấy trạng thái hiện tại và danh sách thứ tự từ PHP đã khai báo ở PHP
     const currentStatus = <?= json_encode($currentStatusName) ?>;
     const statusOrderList = <?= json_encode(array_keys($statusOrder)) ?>;
 
@@ -302,7 +302,7 @@ $updateQuery .= " WHERE order_ID = $order_ID";
         }
     });
 
-    // Xác nhận với SweetAlert2 trước khi gửi, và kiểm tra ngược trạng thái client-side
+    // Xác nhận trước khi gửi, và kiểm tra ngược trạng thái client-side
     document.querySelector('form').addEventListener('submit', function (e) {
         e.preventDefault();
 

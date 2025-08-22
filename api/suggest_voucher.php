@@ -4,9 +4,6 @@ startRoleSession('customer');
 require_once '../database/dbhelper.php';
 require_once '../utils/utility.php';
 
-error_log(print_r($_SESSION, true)); // Ghi vào log của PHP
-
-
 
 header('Content-Type: application/json');
 

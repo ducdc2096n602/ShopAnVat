@@ -1,7 +1,6 @@
 <?php
 require_once('helpers/startSession.php');
 startRoleSession('customer');
-// Sau khi chắc chắn session đã khởi tạo, mới log:
 echo "<script>console.log('PHP sees account_ID = " . ($_SESSION['account_ID'] ?? 'null') . "');</script>";
 
 require_once('database/config.php');
@@ -116,11 +115,18 @@ function formatCurrency($amount) {
                     <div class="card-body d-flex flex-column justify-content-between w-100">
                         <div>
                             <h5 class="card-title font-weight-bold mb-1"><?= htmlspecialchars($v['code']) ?></h5>
-                            <p class="mb-1">
-                                <?= $v['discount_type'] === 'percent'
-                                    ? 'Giảm ' . $v['discount_value'].'%'
-                                    : 'Giảm ' . formatCurrency($v['discount_value']) ?>
-                            </p>
+                           <p class="mb-1">
+                                <?php if ($v['discount_type'] === 'percent'): ?>
+                                    Giảm <?= $v['discount_value'] ?>%
+                                    <?php if (!is_null($v['max_discount'])): ?>
+                                        (tối đa <?= formatCurrency($v['max_discount']) ?>)
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    Giảm <?= formatCurrency($v['discount_value']) ?>
+                                <?php endif; ?>
+
+                                                            </p>
+
                             <p class="mb-1">Đơn tối thiểu: <?= formatCurrency($v['min_order_amount']) ?></p>
                             <p class="mb-1">
                                 HSD: Từ <?= date('d/m/Y', strtotime($v['start_date'])) ?>
@@ -140,13 +146,14 @@ function formatCurrency($amount) {
                                     <?= json_encode($v["code"]) ?>,
                                     <?= json_encode(date("d/m/Y", strtotime($v["start_date"]))) ?>,
                                     <?= json_encode(date("d/m/Y", strtotime($v["end_date"]))) ?>,
-                                    <?= json_encode([
-                                        ($v["discount_type"] === "percent"
-                                            ? "Giảm {$v["discount_value"]}% cho đơn từ " . formatCurrency($v["min_order_amount"])
-                                            : "Giảm " . formatCurrency($v["discount_value"]) . " cho đơn từ " . formatCurrency($v["min_order_amount"])
-                                        ),
-                                        "Chỉ sử dụng 1 lần/người"
-                                    ]) ?>,
+                                   <?= json_encode([
+                                    ($v["discount_type"] === "percent"
+                                        ? "Giảm {$v["discount_value"]}% (tối đa " . formatCurrency($v["max_discount"]) . ") cho đơn từ " . formatCurrency($v["min_order_amount"])
+                                        : "Giảm " . formatCurrency($v["discount_value"]) . " cho đơn từ " . formatCurrency($v["min_order_amount"])
+                                    ),
+                                    "Chỉ sử dụng 1 lần/người"
+                                ]) ?>
+,
                                     <?= json_encode(strip_tags($v["description"])) ?>
                                 )'
 
@@ -182,16 +189,21 @@ const isLoggedIn = <?= $account_id ? 'true' : 'false' ?>;
 
 function saveVoucher(voucher_ID) {
     if (!isLoggedIn) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Bạn chưa đăng nhập',
-            text: 'Vui lòng đăng nhập để lưu voucher.',
-            confirmButtonText: 'Đăng nhập ngay'
-        }).then(() => {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Bạn chưa đăng nhập',
+        text: 'Vui lòng đăng nhập để lưu voucher.',
+        showCancelButton: true, 
+        confirmButtonText: 'Đăng nhập ngay',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
             window.location.href = '/ShopAnVat/login/login.php';
-        });
-        return;
-    }
+        }
+    });
+    return;
+}
+
 
 
 fetch('/ShopAnVat/api/save_voucher.php', {
@@ -201,7 +213,7 @@ fetch('/ShopAnVat/api/save_voucher.php', {
         'Cache-Control': 'no-cache'
     },
     body: 'voucher_ID=' + encodeURIComponent(voucher_ID),
-    credentials: 'include' // 👈 THÊM DÒNG NÀY!
+    credentials: 'include' 
 })
 
 .then(response => response.json())

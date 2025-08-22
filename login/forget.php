@@ -166,7 +166,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email'])) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Thành công!',
-                            text: 'Đã gửi email đặt lại mật khẩu! Vui lòng kiểm tra hộp thư.',
+                            text: 'Đã gửi email đặt lại mật khẩu! Vui lòng kiểm tra email',
                             confirmButtonColor: '#28a745',
                             background: '#e7f5e7',
                             showClass: {

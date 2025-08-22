@@ -135,8 +135,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="text-right">
       <input type="submit" name="submit" class="btn btn-primary px-4 py-2" value="Xác nhận">
     </div>
-
-    <p class="mt-3 text-right"><a href="reg.php">Quên mật khẩu?</a></p>
   </form>
 </div>
 

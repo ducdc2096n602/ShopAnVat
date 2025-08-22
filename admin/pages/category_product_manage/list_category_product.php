@@ -8,21 +8,17 @@ $page = isset($_GET['page']) && $_GET['page'] > 0 ? intval($_GET['page']) : 1;
 $limit = 10;
 $start = ($page - 1) * $limit;
 
-// Lấy tổng số danh mục để phân trang
-// Nếu bạn muốn phân trang chỉ tính những danh mục đang hoạt động, sử dụng:
+
 $countSql = "SELECT COUNT(*) AS total FROM Category WHERE is_deleted = 0";
-// Nếu bạn muốn phân trang tính cả danh mục đã vô hiệu hóa, sử dụng:
-// $countSql = "SELECT COUNT(*) AS total FROM Category";
+
 
 $result = executeSingleResult($countSql);
 $total = $result['total'] ?? 0;
 $totalPages = ceil($total / $limit);
 
-// Lấy danh sách danh mục
-// Nếu bạn muốn hiển thị chỉ các danh mục đang hoạt động, sử dụng:
+
 $sql = "SELECT * FROM Category WHERE is_deleted = 0 ORDER BY created_at DESC LIMIT $start, $limit";
-// Nếu bạn muốn hiển thị tất cả danh mục (bao gồm cả đã vô hiệu hóa), sử dụng:
-// $sql = "SELECT * FROM Category ORDER BY created_at DESC LIMIT $start, $limit";
+
 
 $categoryList = executeResult($sql);
 ?>
@@ -67,7 +63,7 @@ $categoryList = executeResult($sql);
         .table-striped tbody tr:nth-child(even) {
             background-color: #e0e0e0;
         }
-        .inactive-cell { /* Đổi từ .inactive thành .inactive-cell cho rõ ràng hơn */
+        .inactive-cell { 
             opacity: 0.5;
         }
         .gap-1 > * {
@@ -130,7 +126,7 @@ $categoryList = executeResult($sql);
                     echo '<tr><td colspan="4" class="text-danger py-4">Không có danh mục nào.</td></tr>';
                 } else {
                     foreach ($categoryList as $item) {
-                        // Giả định cột 'is_deleted' tồn tại trong bảng Category
+                        
                         $isDeleted = $item['is_deleted'] == 1;
                         $badge = $isDeleted 
                             ? '<span class="badge badge-secondary"><i class="fas fa-ban"></i> Đã vô hiệu hóa</span>'
@@ -170,8 +166,7 @@ $categoryList = executeResult($sql);
     <div class="mt-3">
         <ul class="pagination justify-content-center">
             <?php
-            // Lấy tổng số danh mục một lần nữa (để đảm bảo phân trang hiển thị đúng)
-            // Cân nhắc dùng lại $total tính ở trên nếu logic giống nhau
+            // Lấy tổng số danh mục một lần nữa để đảm bảo phân trang hiển thị đúng
             for ($i = 1; $i <= $totalPages; $i++) {
                 $query = $_GET;
                 $query['page'] = $i;
@@ -191,10 +186,10 @@ $categoryList = executeResult($sql);
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-// Hàm xử lý SweetAlert2 từ session, chạy ngay khi DOM được tải
+
 document.addEventListener('DOMContentLoaded', function() {
     <?php
-    // Hiển thị thông báo SweetAlert2 nếu có trong session
+    
     if (isset($_SESSION['swal_alert'])) {
         $swal_type = $_SESSION['swal_alert']['type'];
         $swal_message = $_SESSION['swal_alert']['message'];
@@ -223,7 +218,7 @@ function toggleCategory(id, status) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.post("ajax.php", {
-                action: "toggleCategory", // Đặt tên action rõ ràng hơn
+                action: "toggleCategory", 
                 category_ID: id,
                 status: status
             }, function(response) {

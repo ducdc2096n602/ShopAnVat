@@ -1,6 +1,6 @@
 <?php
 require_once('../../../../helpers/startSession.php');
-startRoleSession('admin'); // Hàm này khả năng cao đã gọi session_start() bên trong.
+startRoleSession('admin'); 
 require_once('../../../../database/dbhelper.php');
 ?>
 <!DOCTYPE html>
@@ -95,7 +95,7 @@ require_once('../../../../database/dbhelper.php');
     </div>
 
     <?php
-    // THAY THẾ KHỐI HIỂN THỊ THÔNG BÁO BẰNG SWEETALERT2
+   
     if (isset($_SESSION['message'])) {
         echo "<script>
             Swal.fire({
@@ -108,7 +108,7 @@ require_once('../../../../database/dbhelper.php');
         </script>";
         unset($_SESSION['message']); // Xóa thông báo sau khi đã hiển thị
     }
-    // Hiển thị thông báo lỗi từ editstaff.php (nếu có, ví dụ không tìm thấy user để edit)
+    // Hiển thị thông báo lỗi từ editstaff.php nếu có, ví dụ không tìm thấy user để edit
     if (isset($_SESSION['message_error'])) {
         echo "<script>
             Swal.fire({
@@ -261,7 +261,7 @@ function toggleStatus(account_ID, newStatus) {
                         <i class="fas fa-ban text-danger"></i> Vô hiệu hóa
                     </a>
                 `);
-                // SweetAlert2 cho thông báo kích hoạt thành công
+                // thông báo kích hoạt thành công
                 Swal.fire({
                     icon: 'success',
                     title: 'Thành công!',
@@ -277,7 +277,7 @@ function toggleStatus(account_ID, newStatus) {
                         <i class="fas fa-check-circle text-success"></i> Kích hoạt lại
                     </a>
                 `);
-                // SweetAlert2 cho thông báo vô hiệu hóa thành công
+                //  thông báo vô hiệu hóa thành công
                 Swal.fire({
                     icon: 'success',
                     title: 'Thành công!',
@@ -287,7 +287,7 @@ function toggleStatus(account_ID, newStatus) {
                 });
             }
         } else {
-            // SweetAlert2 cho thông báo thất bại
+            // thông báo thất bại
             Swal.fire({
                 icon: 'error',
                 title: 'Lỗi!',

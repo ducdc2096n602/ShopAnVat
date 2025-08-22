@@ -88,9 +88,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['reset'])) {
     echo '<script>';
 
     if ($newPassword !== $confirmPassword) {
-        echo 'Swal.fire("Lỗi", "Mật khẩu không khớp!", "error");';
-    } elseif (strlen($newPassword) < 6) {
-        echo 'Swal.fire("Lỗi", "Mật khẩu phải có ít nhất 6 ký tự!", "warning");';
+        echo 'Swal.fire("Lưu ý", "Mật khẩu không khớp!", "error");';
+    } elseif (strlen($newPassword) < 8) {
+        echo 'Swal.fire("Lưu ý", "Mật khẩu phải có ít nhất 8 ký tự bao gồm cả chữ và số!", "warning");';
+    } elseif (!preg_match("/[A-Za-z]/", $newPassword) || !preg_match("/[0-9]/", $newPassword)) {
+        echo 'Swal.fire("Lưu ý", "Mật khẩu phải bao gồm cả chữ và số!", "warning");';
     } else {
         // Băm mật khẩu mới
         $hashed = password_hash($newPassword, PASSWORD_DEFAULT);
@@ -112,6 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['reset'])) {
 
     echo '</script>';
 }
+
 ?>
 </body>
 </html>

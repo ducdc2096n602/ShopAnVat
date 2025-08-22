@@ -349,7 +349,6 @@ function changeMainImage(el) {
     el.classList.add('active');
 }
 
-// Voice search dùng SweetAlert2 thay vì alert()
 function startVoiceSearch() {
     if (!('webkitSpeechRecognition' in window)) {
         Swal.fire({

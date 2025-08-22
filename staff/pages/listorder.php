@@ -10,7 +10,7 @@ if (!isset($_SESSION['account_ID']) || $_SESSION['role_ID'] != 2) {
 if (!isset($_SESSION['staff_ID'])) {
     die('Không xác định được nhân viên đang đăng nhập. Vui lòng đăng nhập lại.');
 }
-$staff_ID = intval($_SESSION['staff_ID']); // không cần check isset nữa vì đã kiểm tra ở trên
+$staff_ID = intval($_SESSION['staff_ID']); 
 
 
 $statusList = ['Chờ xác nhận', 'Đã xác nhận', 'Đang chuẩn bị hàng', 'Đang giao hàng', 'Hoàn tất', 'Đã hủy'];
@@ -201,7 +201,7 @@ foreach ($statusCountsRaw as $row) {
     </form>
 
     <div class="alert alert-warning text-center <?= $showDateWarning ? '' : 'd-none' ?>" id="date-warning">
-        ⚠️ Ngày bắt đầu không thể lớn hơn ngày kết thúc. Vui lòng chọn lại.
+         Ngày bắt đầu không thể lớn hơn ngày kết thúc. Vui lòng chọn lại.
     </div>
 
     <div class="card shadow-sm mb-0">

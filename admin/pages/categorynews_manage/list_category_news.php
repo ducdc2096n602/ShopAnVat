@@ -183,7 +183,6 @@ require_once('../../../database/dbhelper.php');
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 function toggleCategoryNews(id, status) {
-    // Sử dụng SweetAlert2 cho xác nhận xóa/vô hiệu hóa
     Swal.fire({
         title: 'Xác nhận hành động',
         text: status == 1 ? "Bạn có chắc chắn muốn vô hiệu hóa danh mục này không?" : "Bạn có chắc chắn muốn kích hoạt lại danh mục này không?",
@@ -204,7 +203,7 @@ function toggleCategoryNews(id, status) {
                     const row = $('.toggle-btn[data-id="' + id + '"]').closest('tr');
                     const statusCell = row.find('td:nth-child(3)');
                     const nameCell = row.find('td:nth-child(2)');
-                    const dropdownItem = row.find('.toggle-btn'); // Lấy phần tử <a> trong dropdown
+                    const dropdownItem = row.find('.toggle-btn'); 
 
                     if (status == 1) { // Đã vô hiệu hóa
                         statusCell.html('<span class="badge badge-secondary"><i class="fas fa-ban"></i> Đã vô hiệu hóa</span>');
@@ -234,7 +233,7 @@ function toggleCategoryNews(id, status) {
                         'error'
                     );
                 }
-            }).fail(function() { // Handle AJAX failure
+            }).fail(function() { 
                 Swal.fire(
                     'Lỗi!',
                     'Không thể kết nối đến máy chủ để cập nhật trạng thái.',
@@ -245,10 +244,10 @@ function toggleCategoryNews(id, status) {
     });
 }
 
-// Đoạn script này để hiển thị SweetAlert2 từ session, được đặt ở cuối body
+
 $(document).ready(function() {
     <?php
-    // Hiển thị thông báo SweetAlert2 nếu có trong session
+   
     if (isset($_SESSION['swal_alert'])) {
         $swal_type = $_SESSION['swal_alert']['type'];
         $swal_message = $_SESSION['swal_alert']['message'];

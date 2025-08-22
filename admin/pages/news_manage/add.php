@@ -6,140 +6,114 @@ require_once('../../../database/dbhelper.php');
 $news_ID = $title = $thumbnail = $content = $CategoryNews_ID = "";
 
 // Xử lý submit form
-if (!empty($_POST['title'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['title'])) {
     $title = addslashes($_POST['title']);
     $news_ID = $_POST['news_ID'] ?? '';
     $content = $_POST['content'];
     $CategoryNews_ID = $_POST['CategoryNews_ID'];
 
-    // Biến để lưu trạng thái và thông báo SweetAlert2
     $alert_type = '';
     $alert_message = '';
-    
-    $is_upload_new_thumbnail = false; // Cờ kiểm tra xem có ảnh mới được upload không
+
+    $upload_dir = "../../../images/uploads/newsupload/";
+    $thumbnail = '';
 
     // Xử lý upload ảnh
-    if (!empty($_FILES['thumbnail']['name'])) {
-        $upload_dir = "../../../images/uploads/newsupload/"; // Đường dẫn vật lý đến thư mục lưu ảnh
-        $file_extension = pathinfo($_FILES["thumbnail"]["name"], PATHINFO_EXTENSION);
-        $file_name_unique = uniqid() . '_' . time() . '.' . $file_extension; // Thêm uniqid và timestamp để tránh trùng tên tối đa
-        $target_file = $upload_dir . $file_name_unique;
-
-        // Đây là ĐƯỜNG DẪN SẼ LƯU VÀO DATABASE (CHỈ LÀ TÊN FILE)
-        $thumbnail_db_value = $file_name_unique; 
-
-        $imageFileType = strtolower($file_extension); 
+    if (isset($_FILES['thumbnail']) && $_FILES['thumbnail']['error'] == 0) {
+        $tmpFile = $_FILES['thumbnail']['tmp_name'];
+        $file_extension = strtolower(pathinfo($_FILES["thumbnail"]["name"], PATHINFO_EXTENSION));
         $allowtypes = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'avif', 'jfif'];
         $maxfilesize = 2 * 1024 * 1024; // 2MB
 
         if ($_FILES["thumbnail"]["size"] > $maxfilesize) {
             $alert_type = 'error';
             $alert_message = "Kích thước tệp quá lớn! Vui lòng chọn tệp dưới 2MB.";
-        } elseif (!in_array($imageFileType, $allowtypes)) {
+        } elseif (!in_array($file_extension, $allowtypes)) {
             $alert_type = 'error';
-            $alert_message = "Loại tệp không được phép. Chỉ chấp nhận các định dạng ảnh như JPG, PNG, GIF, WebP, v.v.";
-        } elseif (!move_uploaded_file($_FILES["thumbnail"]["tmp_name"], $target_file)) {
-            $alert_type = 'error';
-            $alert_message = "Lỗi khi tải lên ảnh.";
+            $alert_message = "Loại tệp không hợp lệ. Chỉ cho phép JPG, PNG, GIF, WebP...";
         } else {
-            // Nếu upload thành công, gán tên file duy nhất cho $thumbnail để lưu vào DB
-            $thumbnail = $thumbnail_db_value; 
-            $is_upload_new_thumbnail = true;
+            // Tính hash md5 để kiểm tra trùng
+            $fileHash = md5_file($tmpFile);
+            $foundFile = '';
+
+            foreach (glob($upload_dir . "*") as $existingFile) {
+                if (md5_file($existingFile) === $fileHash) {
+                    $foundFile = basename($existingFile);
+                    break;
+                }
+            }
+
+            if ($foundFile) {
+                // Nếu ảnh đã tồn tại thì dùng lại
+                $thumbnail = $foundFile;
+            } else {
+                // Nếu chưa có thì lưu file mới
+                $file_name_unique = uniqid() . '_' . time() . '.' . $file_extension;
+                $target_file = $upload_dir . $file_name_unique;
+
+                if (move_uploaded_file($tmpFile, $target_file)) {
+                    $thumbnail = $file_name_unique;
+                } else {
+                    $alert_type = 'error';
+                    $alert_message = "Lỗi khi tải lên ảnh.";
+                }
+            }
         }
     } else {
-        // Nếu không upload ảnh mới (chỉ cập nhật thông tin khác hoặc không đổi ảnh)
-        // Lấy lại đường dẫn ảnh hiện tại từ database (chỉ tên file)
-        if ($news_ID != '') {
-            $sql_get_old_thumbnail = 'SELECT thumbnail FROM news WHERE news_ID=' . $news_ID;
+        // Nếu không upload ảnh mới thì lấy ảnh cũ (nếu sửa)
+        if (!empty($news_ID)) {
+            $sql_get_old_thumbnail = "SELECT thumbnail FROM news WHERE news_ID=" . intval($news_ID);
             $old_news = executeSingleResult($sql_get_old_thumbnail);
-            if ($old_news != null) {
-                $thumbnail = $old_news['thumbnail']; // $thumbnail giờ chỉ là tên file
+            if ($old_news) {
+                $thumbnail = $old_news['thumbnail'];
             }
-        } else {
-            $thumbnail = ''; // Chế độ thêm mới, không có ảnh
         }
     }
 
-    // Chỉ thực hiện lưu vào DB nếu không có lỗi từ upload hoặc các kiểm tra khác
-    if (empty($alert_message)) { // Nếu không có lỗi đã phát hiện
-        if (!empty($title)) {
-            if ($news_ID == '') {
-                // Thêm mới
-                $sql = "INSERT INTO news(title, thumbnail, content, CategoryNews_ID) VALUES 
-                        ('$title', '$thumbnail', '$content', '$CategoryNews_ID')";
-                $alert_message = 'Thêm tin tức thành công!';
-                $alert_type = 'success';
-            } else {
-                // Cập nhật
-                // Lấy ảnh cũ từ DB để xóa trước khi cập nhật ảnh mới
-                if ($is_upload_new_thumbnail) { // Chỉ xóa ảnh cũ nếu có ảnh mới được upload
-                    $sql_get_old_thumbnail_for_delete = 'SELECT thumbnail FROM news WHERE news_ID=' . $news_ID;
-                    $old_news_data = executeSingleResult($sql_get_old_thumbnail_for_delete);
-                     // Log: Kiểm tra dữ liệu ảnh cũ lấy từ DB
-   
-                    if ($old_news_data && !empty($old_news_data['thumbnail'])) {
-                        $old_thumbnail_path = $upload_dir . $old_news_data['thumbnail'];
-                        // Debugging: echo "Deleting old file: " . $old_thumbnail_path . "<br>";
-                        if (file_exists($old_thumbnail_path) && is_file($old_thumbnail_path)) {
-                            if (unlink($old_thumbnail_path)) {
-                                // Debugging: echo "Old file deleted successfully.<br>";
-                            } else {
-                                // Debugging: echo "Failed to delete old file. Check permissions.<br>";
-                                $alert_type = 'warning'; // Có thể là cảnh báo thay vì lỗi
-                                $alert_message = 'Cập nhật tin tức thành công, nhưng không thể xóa ảnh cũ. Vui lòng kiểm tra quyền thư mục.';
-                            }
-                        } else {
-                            // Debugging: echo "Old file not found: " . $old_thumbnail_path . "<br>";
-                        }
-                    }
-                    $sql = "UPDATE news SET title='$title', thumbnail='$thumbnail', content='$content', CategoryNews_ID='$CategoryNews_ID' WHERE news_ID=$news_ID";
-                } else { // Không có ảnh mới được upload, chỉ cập nhật các trường khác
-                    $sql = "UPDATE news SET title='$title', content='$content', CategoryNews_ID='$CategoryNews_ID' WHERE news_ID=$news_ID";
-                }
-                $alert_message = 'Cập nhật tin tức thành công!';
-                $alert_type = 'success';
-            }
+    // Nếu không có lỗi thì lưu DB
+    if (empty($alert_message)) {
+        if (empty($news_ID)) {
+            // Thêm mới
+            $sql = "INSERT INTO news(title, thumbnail, content, CategoryNews_ID) 
+                    VALUES ('$title', '$thumbnail', '$content', '$CategoryNews_ID')";
             execute($sql);
-            $_SESSION['swal_alert'] = ['type' => $alert_type, 'message' => $alert_message];
-            header('Location: ../news_manage/listnews.php'); // Chuyển hướng về trang danh sách
-            exit;
+            $alert_type = 'success';
+            $alert_message = 'Thêm tin tức thành công!';
         } else {
-            $alert_type = 'error';
-            $alert_message = 'Tiêu đề không được để trống!';
-            $_SESSION['swal_alert'] = ['type' => $alert_type, 'message' => $alert_message]; 
+            // Cập nhật
+            $sql = "UPDATE news SET 
+                        title='$title',
+                        thumbnail='$thumbnail',
+                        content='$content',
+                        CategoryNews_ID='$CategoryNews_ID'
+                    WHERE news_ID=" . intval($news_ID);
+            execute($sql);
+            $alert_type = 'success';
+            $alert_message = 'Cập nhật tin tức thành công!';
         }
-    } else { // Có lỗi từ phần upload ảnh hoặc validation khác
+
         $_SESSION['swal_alert'] = ['type' => $alert_type, 'message' => $alert_message];
-        // Nếu có lỗi, không chuyển hướng mà để hiển thị thông báo trên trang hiện tại
-        // Remove: header('Location: ../news_manage/listnews.php');
-        // Remove: exit;
+        header('Location: ../news_manage/listnews.php');
+        exit;
+    } else {
+        $_SESSION['swal_alert'] = ['type' => $alert_type, 'message' => $alert_message];
     }
 }
 
-// Lấy dữ liệu để sửa (khi tải trang lần đầu hoặc sau khi có lỗi)
+// Load dữ liệu khi sửa
 if (isset($_GET['news_ID'])) {
     $news_ID = $_GET['news_ID'];
-    $sql = 'SELECT * FROM news WHERE news_ID=' . $news_ID;
+    $sql = "SELECT * FROM news WHERE news_ID=" . intval($news_ID);
     $news = executeSingleResult($sql);
-    if ($news != null) {
+    if ($news) {
         $title = $news['title'];
-        $thumbnail = $news['thumbnail']; // $thumbnail ở đây là tên file từ DB (ví dụ: 'abc.jpg')
+        $thumbnail = $news['thumbnail'];
         $content = $news['content'];
         $CategoryNews_ID = $news['CategoryNews_ID'];
-    } else {
-        // Trường hợp news_ID không tồn tại, reset biến
-        $news_ID = $title = $thumbnail = $content = $CategoryNews_ID = "";
     }
-} else {
-    // Đảm bảo $thumbnail rỗng khi ở chế độ thêm mới
-    $news_ID = $title = $thumbnail = $content = $CategoryNews_ID = "";
-}
-
-// Xử lý lại CategoryNews_ID để tránh lỗi nếu không có gì được chọn ban đầu
-if (!isset($CategoryNews_ID) || empty($CategoryNews_ID)) {
-    $CategoryNews_ID = '';
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -246,7 +220,7 @@ $(document).ready(function() {
     });
 
     <?php
-    // Hiển thị thông báo SweetAlert2 nếu có trong session
+   
     if (isset($_SESSION['swal_alert'])) {
         $swal_type = $_SESSION['swal_alert']['type'];
         $swal_message = $_SESSION['swal_alert']['message'];
@@ -256,7 +230,7 @@ $(document).ready(function() {
             text: '{$swal_message}',
             confirmButtonText: 'Đóng'
         });";
-        unset($_SESSION['swal_alert']); // Xóa biến session sau khi hiển thị
+        unset($_SESSION['swal_alert']); 
     }
     ?>
 });

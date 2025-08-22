@@ -61,7 +61,6 @@ $newsList = executeResult($sql);
 <main style="margin-top: 2rem;">
     <section class="main-layout main-layout-2col">
         <div class="row-2col">
-            <!-- Sidebar Danh mục -->
             <aside class="sidebar">
                 <h3>Danh mục tin tức</h3>
                 <ul class="category-list">

@@ -1,6 +1,6 @@
 <?php
 require_once('helpers/startSession.php');
-startRoleSession('customer'); // Ép rõ session khách
+startRoleSession('customer'); 
 
 require "layout/header.php";
 require_once('database/config.php');
@@ -12,14 +12,7 @@ $category_ID = isset($_GET['category_ID']) ? intval($_GET['category_ID']) : null
 $price_range = isset($_GET['price_range']) ? $_GET['price_range'] : ''; 
 $sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : ''; 
 
-// Thêm đoạn này để bật lỗi PHP trong quá trình phát triển
-// Vui lòng xóa hoặc comment lại khi đưa lên môi trường thật
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
-// SỬA ĐỔI QUAN TRỌNG:
-// Kiểm tra nếu có thay đổi trong search, category_ID, price_range, hoặc sort_by, reset page về 1
 $current_page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 
 // Lấy giá trị từ session để so sánh trạng thái trước đó
@@ -55,7 +48,6 @@ $offset = ($current_page - 1) * $limit;
 
 <link rel="stylesheet" href="css/index.css">
 <style>
-    /* CSS cho các bộ lọc mới */
     .filter-controls-top {
         margin-bottom: 25px; /* Khoảng cách với danh sách sản phẩm */
         padding: 15px;
@@ -127,7 +119,6 @@ $offset = ($current_page - 1) * $limit;
         <form action="thucdon.php" method="GET" class="search-form">
             <input name="search" id="searchInput" type="text" placeholder="Nhập từ khóa sản phẩm" value="<?= htmlspecialchars($search) ?>">
             <?php 
-            // Giữ lại các tham số lọc khác khi tìm kiếm
             if ($category_ID !== null) {
                 echo '<input type="hidden" name="category_ID" value="' . $category_ID . '">';
             }

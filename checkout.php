@@ -604,7 +604,7 @@ async function loadProvinces() {
     });
 }
 
-// Khi chọn tỉnh → load quận, lưu tên + id
+// Khi chọn tỉnh, load quận, lưu tên + id
 document.getElementById('province').addEventListener('change', async e => {
     const selectedOption = e.target.options[e.target.selectedIndex];
     const provinceId = selectedOption.value;
@@ -629,7 +629,7 @@ document.getElementById('province').addEventListener('change', async e => {
     document.getElementById('ward').innerHTML = '';
 });
 
-// Khi chọn quận → load phường, lưu tên + id
+// Khi chọn quận, load phường, lưu tên + id
 document.getElementById('district').addEventListener('change', async e => {
     const selectedOption = e.target.options[e.target.selectedIndex];
     const districtId = selectedOption.value;

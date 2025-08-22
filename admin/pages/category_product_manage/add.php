@@ -21,8 +21,7 @@ if (!empty($_POST)) { // Kiểm tra nếu form đã được submit
         $_SESSION['swal_alert'] = ['type' => $alert_type, 'message' => $alert_message];
         // Không exit ở đây để form vẫn hiển thị
     } else {
-        // SQL Injection: Nên dùng prepared statements thay vì addslashes/str_replace
-        // Tuy nhiên, để giữ cấu trúc code hiện tại, tôi sẽ dùng addslashes
+        
         $category_name_escaped = addslashes($category_name);
 
         if ($category_ID == '') {
@@ -35,7 +34,7 @@ if (!empty($_POST)) { // Kiểm tra nếu form đã được submit
                 $alert_type = 'error';
                 $alert_message = 'Danh mục này đã tồn tại!';
                 $_SESSION['swal_alert'] = ['type' => $alert_type, 'message' => $alert_message];
-                // Không exit ở đây để form vẫn hiển thị
+               
             } else {
                 $sql = 'INSERT INTO Category (category_name, created_at, updated_at)
                         VALUES ("' . $category_name_escaped . '", "' . $created_at . '", "' . $updated_at . '")';
@@ -44,7 +43,7 @@ if (!empty($_POST)) { // Kiểm tra nếu form đã được submit
                 $alert_message = 'Đã thêm danh mục thành công!';
                 $_SESSION['swal_alert'] = ['type' => $alert_type, 'message' => $alert_message];
                 header('Location: list_category_product.php');
-                exit(); // RẤT QUAN TRỌNG: Dừng script sau khi chuyển hướng
+                exit(); 
             }
         } else {
             // Cập nhật
@@ -56,7 +55,7 @@ if (!empty($_POST)) { // Kiểm tra nếu form đã được submit
                 $alert_type = 'error';
                 $alert_message = 'Tên danh mục này đã tồn tại cho danh mục khác!';
                 $_SESSION['swal_alert'] = ['type' => $alert_type, 'message' => $alert_message];
-                // Không exit ở đây
+              
             } else {
                 $sql = 'UPDATE Category 
                         SET category_name="' . $category_name_escaped . '", updated_at="' . $updated_at . '" 
@@ -66,7 +65,7 @@ if (!empty($_POST)) { // Kiểm tra nếu form đã được submit
                 $alert_message = 'Đã sửa danh mục thành công!';
                 $_SESSION['swal_alert'] = ['type' => $alert_type, 'message' => $alert_message];
                 header('Location: list_category_product.php');
-                exit(); // RẤT QUAN TRỌNG: Dừng script sau khi chuyển hướng
+                exit(); 
             }
         }
     }
@@ -121,7 +120,7 @@ if (isset($_GET['category_ID']) && !empty($_GET['category_ID'])) {
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     <?php
-    // Hiển thị thông báo SweetAlert2 nếu có trong session
+    
     if (isset($_SESSION['swal_alert'])) {
         $swal_type = $_SESSION['swal_alert']['type'];
         $swal_message = $_SESSION['swal_alert']['message'];

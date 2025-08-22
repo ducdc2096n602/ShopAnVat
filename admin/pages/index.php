@@ -356,7 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const fromDateStr = formatDate(oneMonthAgo);
   const toDateStr = formatDate(today);
 
-  // === Biểu đồ DOANH THU ===
+  // Biểu đồ DOANH THU
   const revenueFrom = document.getElementById('fromDate');
   const revenueTo = document.getElementById('toDate');
   const revenueType = document.getElementById('filterType');
@@ -366,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
     revenueTo.type = 'date';
     revenueFrom.value = fromDateStr;
     revenueTo.value = toDateStr;
-    revenueType.value = 'day'; // Có thể dùng 'month' nếu muốn
+    revenueType.value = 'day'; 
 
     loadRevenueByTime(); // Tự động gọi biểu đồ doanh thu
   }
@@ -381,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
     orderTo.type = 'date';
     orderFrom.value = fromDateStr;
     orderTo.value = toDateStr;
-    orderType.value = 'day'; // Có thể dùng 'month' nếu muốn
+    orderType.value = 'day'; 
 
     loadOrderChart(); // Tự động gọi biểu đồ đơn hàng
   }

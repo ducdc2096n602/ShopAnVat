@@ -57,7 +57,6 @@ if (isset($_SESSION['message'])) {
     <div class="container">
         <div class="thank-you">
             <?php
-            // Hiển thị thông báo chung từ session (nếu có)
             if (!empty($message)) {
                 $alert_class = ($message_type === 'success') ? 'alert-success' : 'alert-danger';
                 echo '<div class="alert ' . $alert_class . ' text-center" role="alert">' . htmlspecialchars($message) . '</div>';

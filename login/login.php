@@ -14,7 +14,7 @@ $username = $password = '';
 $login_error = '';
 $redirect = $_GET['redirect'] ?? '';
 
-// 👉 Xử lý đăng nhập
+//  Xử lý đăng nhập
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST["username"]);
     $password = trim($_POST["password"]);

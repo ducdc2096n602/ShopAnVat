@@ -1,6 +1,6 @@
 <?php
 require_once('helpers/startSession.php');
-startRoleSession('customer'); // Ép rõ session khách
+startRoleSession('customer'); 
 require "layout/header.php";
 require_once('database/config.php');
 require_once('database/dbhelper.php');
@@ -26,7 +26,7 @@ button.listening i {
     100% { transform: scale(1); }
 }
 
-/* --- BẮT ĐẦU CSS PHÂN TRANG ĐẸP --- */
+/* --- CSS PHÂN TRANG--- */
 .pagination {
     display: flex;
     justify-content: center;
@@ -85,7 +85,6 @@ button.listening i {
         font-size: 0.95rem;
     }
 }
-/* --- KẾT THÚC CSS PHÂN TRANG ĐẸP --- */
 </style>
 
 <main>
@@ -159,7 +158,7 @@ $sql = "SELECT p.*, pi.image_url
 
 $products = executeResult($sql);
 
-echo '<div class="product-recently"><div class="row">';
+echo '<div id="product-list" class="product-recently"><div class="row">';
 if (empty($products)) {
     echo '<p style="text-align: center; width: 100%; padding: 20px;">Không tìm thấy sản phẩm nào.</p>';
 } else {
@@ -186,7 +185,7 @@ if ($total_pages > 1) {
     echo '<div class="pagination">';
     // Nút "Trang trước" với icon
     if ($current_page > 1) {
-        $prev_page_link = 'index.php?page=' . ($current_page - 1);
+        $prev_page_link = 'index.php?page=' . ($current_page - 1) . '#product-list';
         if (!empty($search)) $prev_page_link .= '&search=' . urlencode($search);
         if ($category_ID !== null) $prev_page_link .= '&category_ID=' . $category_ID;
         echo '<a href="' . $prev_page_link . '" class="arrow" title="Trang trước"><i class="fas fa-angle-left"></i></a>';
@@ -198,7 +197,7 @@ if ($total_pages > 1) {
             $i == 1 || $i == $total_pages ||
             ($i >= $current_page - $range && $i <= $current_page + $range)
         ) {
-            $page_link = 'index.php?page=' . $i;
+            $page_link = 'index.php?page=' . $i . '#product-list';
             if (!empty($search)) $page_link .= '&search=' . urlencode($search);
             if ($category_ID !== null) $page_link .= '&category_ID=' . $category_ID;
             if ($i == $current_page) {
@@ -214,7 +213,7 @@ if ($total_pages > 1) {
     }
     // Nút "Trang sau" với icon
     if ($current_page < $total_pages) {
-        $next_page_link = 'index.php?page=' . ($current_page + 1);
+        $next_page_link = 'index.php?page=' . ($current_page + 1) . '#product-list';
         if (!empty($search)) $next_page_link .= '&search=' . urlencode($search);
         if ($category_ID !== null) $next_page_link .= '&category_ID=' . $category_ID;
         echo '<a href="' . $next_page_link . '" class="arrow" title="Trang sau"><i class="fas fa-angle-right"></i></a>';
@@ -227,7 +226,7 @@ if ($total_pages > 1) {
     </section>
 </main>
 
-<!-- Voice Search with SweetAlert -->
+
 <script>
 function startVoiceSearch() {
     if (!('webkitSpeechRecognition' in window)) {

@@ -3,7 +3,6 @@ require_once('../../../database/dbhelper.php');
 require_once('../../../helpers/startSession.php');
 startRoleSession('admin');
 
-// Đảm bảo không có bất kỳ output nào (khoảng trắng, dòng mới) trước header
 header('Content-Type: application/json');
 
 $response = ['status' => 'error', 'message' => 'Yêu cầu không hợp lệ.'];
@@ -57,5 +56,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 echo json_encode($response);
-exit(); // Luôn thoát sau khi echo JSON
+exit(); 
 ?>

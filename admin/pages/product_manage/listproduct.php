@@ -3,7 +3,7 @@ require_once('../../../helpers/startSession.php');
 startRoleSession('admin');
 require_once('../../../database/dbhelper.php');
 
-// Lấy thông báo SweetAlert2 từ session 
+
 $swal_alert_data = null;
 if (isset($_SESSION['swal_alert'])) { 
     $swal_alert_data = $_SESSION['swal_alert'];
@@ -158,14 +158,13 @@ $productList = executeResult($sql);
 
                             // Logic kiểm tra và hiển thị ảnh
                             $image_filename = isset($item['image_url']) ? trim($item['image_url']) : '';
-                            $valid_image_pattern = '/^[a-zA-Z0-9._-]+?\.(jpg|jpeg|png|gif|webp)$/i';
 
-                            $image_src = '';
-                            if (!empty($image_filename) && preg_match($valid_image_pattern, $image_filename)) {
-                                $image_src = '../../../images/uploads/product/' . htmlspecialchars($image_filename);
+                            if (!empty($image_filename)) {
+                                $image_src = '../../../images/uploads/product/' . $image_filename;
                             } else {
                                 $image_src = 'https://via.placeholder.com/60x60?text=No+Image';
                             }
+
                             
                             echo '<tr>
                                     <td>' . $index++ . '</td>
@@ -225,7 +224,6 @@ $productList = executeResult($sql);
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Xử lý thông báo SweetAlert2 từ session 
     const swalAlertFromSessionStorage = sessionStorage.getItem('swal_alert');
     if (swalAlertFromSessionStorage) {
         const alertData = JSON.parse(swalAlertFromSessionStorage);
@@ -238,7 +236,6 @@ document.addEventListener('DOMContentLoaded', function() {
         sessionStorage.removeItem('swal_alert'); 
     }
 
-    // Xử lý thông báo SweetAlert2 từ PHP session (nếu có trường hợp khác dùng trực tiếp SESSION)
     <?php if ($swal_alert_data): ?>
         Swal.fire({
             icon: '<?= $swal_alert_data['type'] ?>',
@@ -275,7 +272,6 @@ function toggleProduct(id, status) {
                 try {
                     const res = typeof response === 'string' ? JSON.parse(response) : response;
                     if (res.status === 'success') {
-                        // Lưu thông báo vào sessionStorage để hiển thị sau khi reload trang
                         sessionStorage.setItem('swal_alert', JSON.stringify({
                             type: 'success',
                             message: res.message || successMessage

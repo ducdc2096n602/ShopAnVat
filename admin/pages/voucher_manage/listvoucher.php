@@ -3,11 +3,11 @@ require_once('../../../database/dbhelper.php');
 require_once('../../../helpers/startSession.php');
 startRoleSession('admin');
 
-// Lấy thông báo SweetAlert2 từ session nếu có, sau đó xóa nó
+
 $swal_alert_data = null;
 if (isset($_SESSION['swal_alert'])) {
     $swal_alert_data = $_SESSION['swal_alert'];
-    unset($_SESSION['swal_alert']); // Rất quan trọng: xóa session sau khi đã lấy
+    unset($_SESSION['swal_alert']); 
 }
 ?>
 <!DOCTYPE html>
@@ -33,13 +33,13 @@ if (isset($_SESSION['swal_alert'])) {
         }
         .table th, .table td {
             vertical-align: middle !important;
-            white-space: nowrap; /* Prevent wrapping for better alignment, can adjust if content is too long */
+            white-space: nowrap; 
         }
         .description-cell {
             max-width: 180px;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: normal; /* Allow description to wrap if needed */
+            white-space: normal; 
         }
         .detail-row {
             display: none;
@@ -51,11 +51,11 @@ if (isset($_SESSION['swal_alert'])) {
         .gap-1 > *:last-child {
             margin-right: 0;
         }
-        /* Custom status badges */
-        .badge-active { background-color: #28a745; color: white; } /* Success green */
-        .badge-expired { background-color: #dc3545; color: white; } /* Danger red */
-        .badge-limit { background-color: #ffc100; color: #343a40; } /* Warning yellow */
-        .badge-disabled { background-color: #6c757d; color: white; } /* Secondary grey */
+       
+        .badge-active { background-color: #28a745; color: white; } 
+        .badge-expired { background-color: #dc3545; color: white; } 
+        .badge-limit { background-color: #ffc100; color: #343a40; }
+        .badge-disabled { background-color: #6c757d; color: white; } 
     </style>
 </head>
 <body>
@@ -64,11 +64,6 @@ if (isset($_SESSION['swal_alert'])) {
         <a href="../index.php" class="btn btn-primary"><i class="fas fa-home"></i> Trang chủ</a>
         <a href="add.php" class="btn btn-success ml-2"><i class="fas fa-plus"></i> Thêm mới</a>
     </div>
-
-    <?php /* if (isset($_SESSION['message'])): ?>
-        <div class="alert alert-success text-center"><?= $_SESSION['message'] ?></div>
-        <?php unset($_SESSION['message']); ?>
-    <?php endif; */ ?>
 
     <div class="card shadow-sm mb-0 mt-3">
         <div class="card-header text-white text-center" style="background-color: #00a0b0; padding: 20px;">
@@ -95,7 +90,7 @@ if (isset($_SESSION['swal_alert'])) {
                 $page = $_GET['page'] ?? 1;
                 $limit = 10;
                 $start = ($page - 1) * $limit;
-                $now = date('Y-m-d H:i:s'); // Changed to include time for more precise comparison
+                $now = date('Y-m-d H:i:s'); 
 
                 $sql = "SELECT * FROM Voucher ORDER BY created_at DESC LIMIT $start, $limit";
                 $voucherList = executeResult($sql);
@@ -105,7 +100,7 @@ if (isset($_SESSION['swal_alert'])) {
                     echo '<tr><td colspan="8" class="text-center text-danger py-4">Không có voucher nào!</td></tr>';
                 } else {
                     foreach ($voucherList as $item):
-                        $isExpired = strtotime($item['end_date']) < strtotime($now); // Compare timestamps
+                        $isExpired = strtotime($item['end_date']) < strtotime($now); 
                         $isOutOfUsage = $item['usage_limit'] !== null && $item['usage_count'] >= $item['usage_limit'];
                         $isDeleted = $item['is_deleted'] == 1;
 
@@ -122,14 +117,14 @@ if (isset($_SESSION['swal_alert'])) {
                             }
                             if ($isOutOfUsage) {
                                 $statusBadges[] = '<span class="badge badge-limit"><i class="fas fa-exclamation-triangle"></i> Hết lượt dùng</span>';
-                                if (!$isExpired) $rowClass = 'table-warning'; // Yellow if not expired but out of usage
+                                if (!$isExpired) $rowClass = 'table-warning'; 
                             }
                             if (empty($statusBadges)) {
                                 $statusBadges[] = '<span class="badge badge-active"><i class="fas fa-check-circle"></i> Đang hiệu lực</span>';
                             }
                         }
 
-                        $statusHtml = implode(' ', $statusBadges); // Join multiple badges
+                        $statusHtml = implode(' ', $statusBadges); 
                 ?>
                 <tr class="main-row <?= $rowClass ?>">
                     <td><?= $index++ ?></td>
@@ -207,7 +202,6 @@ if (isset($_SESSION['swal_alert'])) {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Hiển thị SweetAlert2 nếu có thông báo từ PHP Session (ví dụ từ add.php)
     <?php if ($swal_alert_data): ?>
         Swal.fire({
             icon: '<?= $swal_alert_data['type'] ?>',
@@ -243,7 +237,6 @@ function toggleVoucher(voucher_ID, status) {
                 try {
                     const data = typeof response === 'string' ? JSON.parse(response) : response;
                     if (data.status === 'success') {
-                        // Sử dụng SweetAlert2 để thông báo thành công và sau đó reload trang
                         Swal.fire({
                             icon: 'success',
                             title: 'Thành công!',
